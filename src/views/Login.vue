@@ -63,6 +63,7 @@ export default {
   },
   async mounted() {
     this.dataUser = await loadDataUser();
+    console.log("this.dataUser", this.dataUser);
     localStorage.clear();
   },
   methods: {
