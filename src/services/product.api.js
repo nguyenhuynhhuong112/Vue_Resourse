@@ -1,18 +1,20 @@
 import axios from "axios";
-export const loadDataUser = async () => {
+
+export const loadDataProduct = async () => {
   try {
     const response = await axios.get(
-      "https://667054bc0900b5f8724a3ee9.mockapi.io/user/user"
+      "https://6671626fe083e62ee43b5f5b.mockapi.io/product/product"
     );
     return response.data;
   } catch (error) {
     return error;
   }
 };
-export const createUser = async (data) => {
+
+export const createProduct = async (data) => {
   try {
     const response = await axios.post(
-      "https://667054bc0900b5f8724a3ee9.mockapi.io/user/user",
+      "https://6671626fe083e62ee43b5f5b.mockapi.io/product/product",
       data
     );
     return response;
@@ -20,10 +22,11 @@ export const createUser = async (data) => {
     return error;
   }
 };
-export const updateUser = async (id, data) => {
+
+export const updateProduct = async (id, data) => {
   try {
     const response = await axios.put(
-      `https://667054bc0900b5f8724a3ee9.mockapi.io/user/user/${id}`,
+      `https://6671626fe083e62ee43b5f5b.mockapi.io/product/product/${id}`,
       data
     );
     return response;
@@ -31,10 +34,11 @@ export const updateUser = async (id, data) => {
     return error;
   }
 };
-export const deleteUser = async (id) => {
+
+export const deleteProduct = async (id) => {
   try {
     const response = await axios.delete(
-      `https://667054bc0900b5f8724a3ee9.mockapi.io/user/user/${id}`
+      `https://6671626fe083e62ee43b5f5b.mockapi.io/product/product/${id}`
     );
     return response;
   } catch (error) {

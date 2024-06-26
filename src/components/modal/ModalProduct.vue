@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-2 w-1/2  rounded-md modal-admin-container bg-white border-blue-300 shadow-md"
+    class="border-2 w-1/2 rounded-md modal-admin-container bg-white border-blue-300 shadow-md"
   >
     <Notification
       :type="type"
@@ -30,14 +30,14 @@
     </div>
   </div>
 </template>
-
-<script>
-import { createUser, updateUser } from "../../services/user.api";
+  
+  <script>
+import { createProduct, updateProduct } from "../../services/product.api";
 import FormInput from "../form/FormInput.vue";
 import Notification from "../notification/Notification.vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
 export default {
-  name: "ModalAdmin",
+  name: "ModalProduct",
   components: {
     FormInput,
     Notification,
@@ -46,9 +46,9 @@ export default {
   props: {
     title: {
       type: String,
-      default: "Modal Admin",
+      default: "Modal Product",
     },
-    dataUser: {
+    dataProduct: {
       type: Array,
       required: true,
       default: () => [],
@@ -62,67 +62,48 @@ export default {
       message: "",
       type: false,
       showNotification: false,
-      user: {},
+      product: {},
       formValues: {},
       formFields: [
         {
-          name: "email",
-          label: "Email",
-          attributes: { type: "email", placeholder: "Enter your email" },
+          name: "name",
+          label: "Product Name",
+          attributes: { type: "text", placeholder: "Enter your product name" },
           required: true,
         },
         {
-          name: "username",
-          label: "User Name",
-          attributes: { type: "text", placeholder: "Enter your username" },
+          name: "type",
+          label: "Type",
+          attributes: { type: "text", placeholder: "Enter your type product" },
           required: true,
         },
         {
-          name: "password",
-          label: "Password",
-          attributes: { type: "password", placeholder: "Enter your password" },
+          name: "price",
+          label: "Price",
+          attributes: { type: "number", placeholder: "Enter your price" },
           required: true,
         },
         {
-          name: "role",
-          label: "Role",
-          type: "radio",
-          options: [
-            { value: "admin", label: "Admin" },
-            { value: "user", label: "User" },
-            { value: "product", label: "Product" },
-          ],
+          name: "website",
+          label: "Website",
+          attributes: { type: "text", placeholder: "Enter your website" },
           required: true,
         },
       ],
     };
   },
   mounted() {
-    if (this.id) this.loadUserUpdate();
+    if (this.id) this.loadProductUpdate();
   },
   methods: {
-    loadUserUpdate() {
-      const user = this.dataUser.find((user) => user.id === this.id);
-      if (user) {
-        this.formValues = { ...user };
+    loadProductUpdate() {
+      const product = this.dataProduct.find((product) => product.id === this.id);
+      if (product) {
+        this.formValues = { ...product };
       }
     },
-    async createUser() {
-      const findUser = this.dataUser.find(
-        (user) =>
-          user.email === this.$refs.formInput.formValues.email ||
-          user.username === this.$refs.formInput.formValues.username
-      );
-      if (findUser) {
-        this.message = "User already exists";
-        this.type = false;
-        this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
-        return;
-      }
-      const response = await createUser(this.$refs.formInput.formValues);
+    async createProduct() {
+      const response = await createProduct(this.$refs.formInput.formValues);
       if (response.status === 201) {
         this.message = "Success";
         this.type = true;
@@ -131,11 +112,11 @@ export default {
           this.showNotification = false;
         }, 2000);
         this.$refs.formInput.resetFields();
-        this.$emit("user-created", response.data);
+        this.$emit("product-created", response.data);
       }
     },
-    async updateUser() {
-      const response = await updateUser(
+    async updateProduct() {
+      const response = await updateProduct(
         this.id,
         this.$refs.formInput.formValues
       );
@@ -146,16 +127,16 @@ export default {
         setTimeout(() => {
           this.showNotification = false;
         }, 2000);
-        this.$emit("update-user", response.data);
+        this.$emit("update-product", response.data);
       }
     },
     async validatForm() {
       const isValid = this.$refs.formInput.validateFields();
       if (isValid) {
         if (this.id) {
-          await this.updateUser();
+          await this.updateProduct();
         } else {
-          await this.createUser();
+          await this.createProduct();
         }
       } else {
         this.message = "Fail";
@@ -172,8 +153,8 @@ export default {
   },
 };
 </script>
-
-<style scoped>
+  
+  <style scoped>
 .modal-admin-container {
   position: fixed;
   top: 60px;
@@ -181,3 +162,4 @@ export default {
   z-index: 1000;
 }
 </style>
+  

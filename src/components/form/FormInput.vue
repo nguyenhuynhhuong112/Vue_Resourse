@@ -61,10 +61,14 @@ export default {
       type: Array,
       required: true,
     },
+    formValues: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
   },
   data() {
     return {
-      formValues: {},
       errors: {},
     };
   },
@@ -120,7 +124,9 @@ export default {
       }
     },
     resetFields() {
-      this.formValues = {};
+      Object.keys(this.formValues).forEach((key) => {
+        this.formValues[key] = '';
+      });
       this.errors = {};
     },
   },
