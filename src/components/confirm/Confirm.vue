@@ -30,7 +30,6 @@
   
   <script>
 import { CloseOutlined } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
 
 export default {
   name: "Confirm",

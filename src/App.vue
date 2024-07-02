@@ -19,7 +19,8 @@ export default {
       path: this.$route.path,
     };
   },
-  created() {
+ 
+  mounted() {
     const email = localStorage.getItem("email");
     if (!email && this.path !== "/login") {
       this.$router.push("/login");

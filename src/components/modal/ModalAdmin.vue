@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-2 w-1/2  rounded-md modal-admin-container bg-white border-blue-300 shadow-md"
+    class="border-2 w-1/2 rounded-md modal-admin-container bg-white border-blue-300 shadow-md"
   >
     <Notification
       :type="type"
@@ -72,7 +72,7 @@ export default {
           required: true,
         },
         {
-          name: "username",
+          name: "userName",
           label: "User Name",
           attributes: { type: "text", placeholder: "Enter your username" },
           required: true,
@@ -84,13 +84,13 @@ export default {
           required: true,
         },
         {
-          name: "role",
+          name: "roleId",
           label: "Role",
           type: "radio",
           options: [
-            { value: "admin", label: "Admin" },
-            { value: "user", label: "User" },
-            { value: "product", label: "Product" },
+            { value: "1", label: "Admin" },
+            { value: "3", label: "User" },
+            { value: "2", label: "Product" },
           ],
           required: true,
         },
@@ -104,41 +104,14 @@ export default {
     loadUserUpdate() {
       const user = this.dataUser.find((user) => user.id === this.id);
       if (user) {
-        this.formValues = { ...user };
+        console.log("roleId: ", user.userRoles[0].roleId);
+        console.log("user: ", user);
+
+        this.formValues = { ...user, roleId: user.userRoles[0].roleId };
       }
     },
     async createUser() {
-      const findUser = this.dataUser.find(
-        (user) =>
-          user.email === this.$refs.formInput.formValues.email ||
-          user.username === this.$refs.formInput.formValues.username
-      );
-      if (findUser) {
-        this.message = "User already exists";
-        this.type = false;
-        this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
-        return;
-      }
       const response = await createUser(this.$refs.formInput.formValues);
-      if (response.status === 201) {
-        this.message = "Success";
-        this.type = true;
-        this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
-        this.$refs.formInput.resetFields();
-        this.$emit("user-created", response.data);
-      }
-    },
-    async updateUser() {
-      const response = await updateUser(
-        this.id,
-        this.$refs.formInput.formValues
-      );
       if (response.status === 200) {
         this.message = "Success";
         this.type = true;
@@ -146,7 +119,26 @@ export default {
         setTimeout(() => {
           this.showNotification = false;
         }, 2000);
-        this.$emit("update-user", response.data);
+        this.$refs.formInput.resetFields();
+        this.$emit("user-created", response.data.data);
+      }
+    },
+    async updateUser() {
+      const newUser = {
+        userName: this.$refs.formInput.formValues.userName,
+        email: this.$refs.formInput.formValues.email,
+        password: this.$refs.formInput.formValues.password,
+        roleId: this.$refs.formInput.formValues.roleId,
+      };
+      const response = await updateUser(this.id, newUser);
+      if (response.status === 200) {
+        this.message = "Success";
+        this.type = true;
+        this.showNotification = true;
+        setTimeout(() => {
+          this.showNotification = false;
+        }, 2000);
+        this.$emit("update-user", response.data.data);
       }
     },
     async validatForm() {

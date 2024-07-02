@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       showModalAdmin: false,
-      columns: ["id", "role", "username", "email", "actions"],
+      columns: ["id", "role", "userName", "email", "actions"],
       dataUser: [],
       message: "",
       type: false,
@@ -78,12 +78,16 @@ export default {
       deletingUserId: null,
       messageConfirm: "",
       idUser: null,
-      title:''
+      title: "",
     };
   },
   async mounted() {
-    this.dataUser = await loadDataUser();
-    
+    this.dataUser = (await loadDataUser()).map((user) => {
+      return {
+        ...user,
+        role: user.userRoles.map((userRole) => userRole.role.name).join(", "),
+      };
+    });
   },
   methods: {
     handleModalAdmin() {
@@ -101,7 +105,7 @@ export default {
     addUserToTable(newUser) {
       this.dataUser.push(newUser);
     },
-    updateUserToTable(userUpdate){
+    updateUserToTable(userUpdate) {
       this.dataUser = this.dataUser.map((user) => {
         if (user.id === userUpdate.id) {
           return userUpdate;
@@ -120,9 +124,9 @@ export default {
       this.messageConfirm = "Are you sure want to delete this user?";
     },
     async handleConfirm(id) {
-      const findUser= this.dataUser.find((user) => user.id === id);
-      if(findUser.role === "admin"){
-        this.message = "You are not authorized"
+      const findUser = this.dataUser.find((user) => user.id === id);
+      if (findUser.role === "admin") {
+        this.message = "You are not authorized";
         this.type = false;
         this.showNotification = true;
         setTimeout(() => {

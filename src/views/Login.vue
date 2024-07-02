@@ -28,7 +28,7 @@
 
 <script>
 import FormInput from "../components/form/FormInput.vue";
-import { loadDataUser } from "../services/user.api";
+import { loadDataUser, loginUser } from "../services/user.api";
 import Notification from "../components/notification/Notification.vue";
 
 export default {
@@ -63,38 +63,27 @@ export default {
   },
   async mounted() {
     this.dataUser = await loadDataUser();
-    console.log("this.dataUser", this.dataUser);
     localStorage.clear();
   },
   methods: {
-    validatForm() {
+    async validatForm() {
       const isValid = this.$refs.formInput.validateFields();
       if (isValid) {
-        const findUser = this.dataUser.find(
-          (user) => user.email === this.$refs.formInput.formValues.email
+        const response = await loginUser(
+          this.$refs.formInput.formValues.email,
+          this.$refs.formInput.formValues.password
         );
-        if (findUser) {
-          if (findUser.password === this.$refs.formInput.formValues.password) {
-            localStorage.setItem(
-              "email",
-              this.$refs.formInput.formValues.email
-            );
-            localStorage.setItem("role", findUser.role);
-            this.showNotification = true;
-            this.message = "Login success!";
-            this.type = true;
-            this.errorMessage = "";
-            setTimeout(() => {
-              this.showNotification = false;
-              this.$router.push({ name: "Dashboard" });
-            }, 2000);
-          } else {
-            this.errors["password"] = "Password is incorrect!";
-            this.errorMessage = this.errors["password"];
-          }
-        } else {
-          this.errors["email"] = "Email is not registered!";
-          this.errorMessage = this.errors["email"];
+        if (response.status === 200) {
+          localStorage.setItem("email", this.$refs.formInput.formValues.email);
+          localStorage.setItem("role", response.data.data.role);
+          this.showNotification = true;
+          this.message = "Login success!";
+          this.type = true;
+          this.errorMessage = "";
+          setTimeout(() => {
+            this.showNotification = false;
+            this.$router.push({ name: "Dashboard" });
+          }, 2000);
         }
       } else {
         this.showNotification = true;

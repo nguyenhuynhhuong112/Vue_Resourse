@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       showModalAdmin: false,
-      columns: ["id", "name", "price", "type", "website","actions"],
+      columns: ["id", "name", "price", "type", "website", "actions"],
       dataProduct: [],
       message: "",
       type: false,
@@ -78,7 +78,7 @@ export default {
       deletingProductId: null,
       messageConfirm: "",
       idProduct: null,
-      title:''
+      title: "",
     };
   },
   async mounted() {
@@ -100,7 +100,7 @@ export default {
     addProductToTable(newProduct) {
       this.dataProduct.push(newProduct);
     },
-    updateProductToTable(productUpdate){
+    updateProductToTable(productUpdate) {
       this.dataProduct = this.dataProduct.map((product) => {
         if (product.id === productUpdate.id) {
           return productUpdate;
@@ -121,7 +121,9 @@ export default {
     async handleConfirm(id) {
       const response = await deleteProduct(id);
       if (response.status === 200) {
-        this.dataProduct = this.dataProduct.filter((product) => product.id !== id);
+        this.dataProduct = this.dataProduct.filter(
+          (product) => product.id !== id
+        );
         this.message = "Delete Success";
         this.type = true;
         this.showNotification = true;

@@ -2,10 +2,11 @@ import axios from "axios";
 
 export const loadDataProduct = async () => {
   try {
-    const response = await axios.get(
-      "https://6671626fe083e62ee43b5f5b.mockapi.io/product/product"
-    );
-    return response.data;
+    // const response = await axios.get(
+    //   "https://6671626fe083e62ee43b5f5b.mockapi.io/product/product"
+    // );
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}product`);
+    return response.data.data;
   } catch (error) {
     return error;
   }
@@ -14,7 +15,7 @@ export const loadDataProduct = async () => {
 export const createProduct = async (data) => {
   try {
     const response = await axios.post(
-      "https://6671626fe083e62ee43b5f5b.mockapi.io/product/product",
+      `${import.meta.env.VITE_BASE_URL}create-product`,
       data
     );
     return response;
@@ -25,8 +26,8 @@ export const createProduct = async (data) => {
 
 export const updateProduct = async (id, data) => {
   try {
-    const response = await axios.put(
-      `https://6671626fe083e62ee43b5f5b.mockapi.io/product/product/${id}`,
+    const response = await axios.patch(
+      `${import.meta.env.VITE_BASE_URL}product/${id}`,
       data
     );
     return response;
@@ -38,7 +39,7 @@ export const updateProduct = async (id, data) => {
 export const deleteProduct = async (id) => {
   try {
     const response = await axios.delete(
-      `https://6671626fe083e62ee43b5f5b.mockapi.io/product/product/${id}`
+      `${import.meta.env.VITE_BASE_URL}product/${id}`
     );
     return response;
   } catch (error) {

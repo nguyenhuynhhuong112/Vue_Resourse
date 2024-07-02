@@ -104,7 +104,8 @@ export default {
     },
     async createProduct() {
       const response = await createProduct(this.$refs.formInput.formValues);
-      if (response.status === 201) {
+      console.log("response create: ", response)
+      if (response.status === 200) {
         this.message = "Success";
         this.type = true;
         this.showNotification = true;
@@ -112,7 +113,7 @@ export default {
           this.showNotification = false;
         }, 2000);
         this.$refs.formInput.resetFields();
-        this.$emit("product-created", response.data);
+        this.$emit("product-created", response.data.data);
       }
     },
     async updateProduct() {
@@ -127,7 +128,7 @@ export default {
         setTimeout(() => {
           this.showNotification = false;
         }, 2000);
-        this.$emit("update-product", response.data);
+        this.$emit("update-product", response.data.data);
       }
     },
     async validatForm() {
