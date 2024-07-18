@@ -32,7 +32,7 @@
 </template>
   
   <script>
-import { createProduct, updateProduct } from "../../services/product.api";
+import serviceProduct from "../../services/product.services";
 import FormInput from "../form/FormInput.vue";
 import Notification from "../notification/Notification.vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
@@ -63,10 +63,11 @@ export default {
       type: false,
       showNotification: false,
       product: {},
+      prevProduct: {},
       formValues: {},
       formFields: [
         {
-          name: "name",
+          name: "productName",
           label: "Product Name",
           attributes: { type: "text", placeholder: "Enter your product name" },
           required: true,
@@ -97,42 +98,52 @@ export default {
   },
   methods: {
     loadProductUpdate() {
-      const product = this.dataProduct.find((product) => product.id === this.id);
+      const product = this.dataProduct.find(
+        (product) => product.productId === this.id
+      );
       if (product) {
         this.formValues = { ...product };
+        this.prevProduct = { ...product };
       }
     },
     async createProduct() {
-      const response = await createProduct(this.$refs.formInput.formValues);
-      console.log("response create: ", response)
-      if (response.status === 200) {
+      const response = await serviceProduct.createProduct(
+        this.$refs.formInput.formValues
+      );
+      if (response.data.statusCode === 201) {
         this.message = "Success";
         this.type = true;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
         this.$refs.formInput.resetFields();
-        this.$emit("product-created", response.data.data);
+        this.$emit("product-created", response.data.result);
       }
     },
     async updateProduct() {
-      const response = await updateProduct(
-        this.id,
-        this.$refs.formInput.formValues
-      );
+      const dataUpdate = {};
+      for (const key in this.$refs.formInput.formValues) {
+        if (this.$refs.formInput.formValues[key] !== this.prevProduct[key]) {
+          dataUpdate[key] = this.$refs.formInput.formValues[key];
+        }
+      }
+      console.log("dataUpdate: ", dataUpdate);
+      if (Object.keys(dataUpdate).length === 0) {
+        this.message = "No data change";
+        this.type = false;
+        this.showNotification = true;
+        return;
+      }
+
+      const response = await serviceProduct.updateProduct(this.id, dataUpdate);
       if (response.status === 200) {
         this.message = "Success";
         this.type = true;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
-        this.$emit("update-product", response.data.data);
+        this.$emit("update-product", this.$refs.formInput.formValues);
       }
     },
     async validatForm() {
       const isValid = this.$refs.formInput.validateFields();
+      console.log("id: ", this.id);
       if (isValid) {
         if (this.id) {
           await this.updateProduct();

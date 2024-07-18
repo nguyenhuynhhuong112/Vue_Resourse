@@ -26,13 +26,13 @@
         <template v-slot:actions="{ item }">
           <button
             class="p-1 rounded-md mr-2 bg-blue-500 text-white"
-            @click="handleUpdate(item.id)"
+            @click="handleUpdate(item.productId)"
           >
             Update
           </button>
           <button
             class="bg-red-500 text-white p-1 rounded-md"
-            @click="handleDelete(item.id)"
+            @click="handleDelete(item.productId)"
           >
             Delete
           </button>
@@ -55,7 +55,7 @@ import ButtonAdd from "../components/buttonAdd/ButtonAdd.vue";
 import ModalProduct from "../components/modal/ModalProduct.vue";
 import Notification from "../components/notification/Notification.vue";
 import Confirm from "../components/confirm/Confirm.vue";
-import { deleteProduct, loadDataProduct } from "../services/product.api";
+import productService from "../services/product.services";
 
 export default {
   name: "Product",
@@ -69,7 +69,14 @@ export default {
   data() {
     return {
       showModalAdmin: false,
-      columns: ["id", "name", "price", "type", "website", "actions"],
+      columns: [
+        "productId",
+        "productName",
+        "price",
+        "type",
+        "website",
+        "actions",
+      ],
       dataProduct: [],
       message: "",
       type: false,
@@ -82,7 +89,7 @@ export default {
     };
   },
   async mounted() {
-    this.dataProduct = await loadDataProduct();
+    this.dataProduct = await productService.loadDataProduct();
   },
   methods: {
     handleModalProduct() {
@@ -101,8 +108,10 @@ export default {
       this.dataProduct.push(newProduct);
     },
     updateProductToTable(productUpdate) {
+      console.log("productUpdate", productUpdate);
+      console.log("dataProduct: ", this.dataProduct)
       this.dataProduct = this.dataProduct.map((product) => {
-        if (product.id === productUpdate.id) {
+        if (product.productId === productUpdate.productId) {
           return productUpdate;
         }
         return product;
@@ -119,17 +128,14 @@ export default {
       this.messageConfirm = "Are you sure want to delete this product?";
     },
     async handleConfirm(id) {
-      const response = await deleteProduct(id);
+      const response = await productService.deleteProduct(id);
       if (response.status === 200) {
         this.dataProduct = this.dataProduct.filter(
-          (product) => product.id !== id
+          (product) => product.productId !== id
         );
         this.message = "Delete Success";
         this.type = true;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
       }
       this.showConfirm = false;
       this.deletingProductId = null;

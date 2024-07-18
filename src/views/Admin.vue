@@ -53,7 +53,7 @@
 import TableShowItems from "../components/table/TableShowItems.vue";
 import ButtonAdd from "../components/buttonAdd/ButtonAdd.vue";
 import ModalAdmin from "../components/modal/ModalAdmin.vue";
-import { deleteUser, loadDataUser } from "../services/user.api";
+import { deleteUser, loadDataUser } from "../services/user.services";
 import Notification from "../components/notification/Notification.vue";
 import Confirm from "../components/confirm/Confirm.vue";
 

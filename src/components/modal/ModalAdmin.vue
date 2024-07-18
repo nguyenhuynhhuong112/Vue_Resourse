@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { createUser, updateUser } from "../../services/user.api";
+import { createUser, updateUser } from "../../services/user.services";
 import FormInput from "../form/FormInput.vue";
 import Notification from "../notification/Notification.vue";
 import { CloseOutlined } from "@ant-design/icons-vue";

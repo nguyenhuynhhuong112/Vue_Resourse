@@ -1,16 +1,30 @@
 import axios from "axios";
 
-export const loginUser = async (email, password) => {
+async function loginUser(email, password) {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}login`, {
+    const body = {
       email,
       password,
-    });
-    return response
+    };
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}user/login`, body);
+    return response;
   } catch (error) {
     return error;
   }
-};
+}
+export { loginUser };
+
+// export const loginUser = async (email, password) => {
+//   try {
+//     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}login`, {
+//       email,
+//       password,
+//     });
+//     return response
+//   } catch (error) {
+//     return error;
+//   }
+// };
 
 export const loadDataUser = async () => {
   try {

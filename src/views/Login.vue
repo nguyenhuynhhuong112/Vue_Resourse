@@ -28,9 +28,9 @@
 
 <script>
 import FormInput from "../components/form/FormInput.vue";
-import { loadDataUser, loginUser } from "../services/user.api";
+// import { loadDataUser, user } from "../services/user.services";
 import Notification from "../components/notification/Notification.vue";
-
+import * as userServices from "../services/user.services";
 export default {
   name: "Login",
   components: {
@@ -69,21 +69,22 @@ export default {
     async validatForm() {
       const isValid = this.$refs.formInput.validateFields();
       if (isValid) {
-        const response = await loginUser(
+        const response = await userServices.loginUser(
           this.$refs.formInput.formValues.email,
           this.$refs.formInput.formValues.password
         );
-        if (response.status === 200) {
+        if (response.data.statusCode === 200) {
           localStorage.setItem("email", this.$refs.formInput.formValues.email);
-          localStorage.setItem("role", response.data.data.role);
+          localStorage.setItem(
+            "role",
+            response.data.result.UserRoles[0].Role.roleName
+          );
           this.showNotification = true;
           this.message = "Login success!";
           this.type = true;
           this.errorMessage = "";
-          setTimeout(() => {
-            this.showNotification = false;
-            this.$router.push({ name: "Dashboard" });
-          }, 2000);
+          this.showNotification = false;
+          this.$router.push({ name: "Dashboard" });
         }
       } else {
         this.showNotification = true;
