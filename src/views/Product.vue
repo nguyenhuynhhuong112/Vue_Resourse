@@ -108,8 +108,6 @@ export default {
       this.dataProduct.push(newProduct);
     },
     updateProductToTable(productUpdate) {
-      console.log("productUpdate", productUpdate);
-      console.log("dataProduct: ", this.dataProduct)
       this.dataProduct = this.dataProduct.map((product) => {
         if (product.productId === productUpdate.productId) {
           return productUpdate;

@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import { createUser, updateUser } from "../../services/user.services";
 import FormInput from "../form/FormInput.vue";
 import Notification from "../notification/Notification.vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
+import userService from "../../services/user.services";
 export default {
   name: "ModalAdmin",
   components: {
@@ -63,6 +63,7 @@ export default {
       type: false,
       showNotification: false,
       user: {},
+      prevUser: {},
       formValues: {},
       formFields: [
         {
@@ -89,8 +90,8 @@ export default {
           type: "radio",
           options: [
             { value: "1", label: "Admin" },
-            { value: "3", label: "User" },
-            { value: "2", label: "Product" },
+            { value: "2", label: "User" },
+            { value: "3", label: "Product" },
           ],
           required: true,
         },
@@ -102,45 +103,79 @@ export default {
   },
   methods: {
     loadUserUpdate() {
-      const user = this.dataUser.find((user) => user.id === this.id);
+      const user = this.dataUser.find((user) => user.userId === this.id);
       if (user) {
-        console.log("roleId: ", user.userRoles[0].roleId);
-        console.log("user: ", user);
-
-        this.formValues = { ...user, roleId: user.userRoles[0].roleId };
+        this.formValues = { ...user, roleId: user.UserRoles[0].roleId };
       }
     },
     async createUser() {
-      const response = await createUser(this.$refs.formInput.formValues);
-      if (response.status === 200) {
+      const response = await userService.createUser(
+        this.$refs.formInput.formValues
+      );
+      if (response.data.statusCode === 200) {
         this.message = "Success";
         this.type = true;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
+
+        const newUser = {
+          ...response.data.result,
+          role:
+            this.$refs.formInput.formValues.roleId === "1"
+              ? "admin"
+              : this.$refs.formInput.formValues.roleId === "2"
+              ? "user"
+              : "product",
+        };
+        this.$emit("user-created", newUser);
         this.$refs.formInput.resetFields();
-        this.$emit("user-created", response.data.data);
       }
     },
+
     async updateUser() {
-      const newUser = {
-        userName: this.$refs.formInput.formValues.userName,
-        email: this.$refs.formInput.formValues.email,
-        password: this.$refs.formInput.formValues.password,
-        roleId: this.$refs.formInput.formValues.roleId,
-      };
-      const response = await updateUser(this.id, newUser);
-      if (response.status === 200) {
+      const dataUpdate = {};
+      for (const key in this.$refs.formInput.formValues) {
+        if (this.$refs.formInput.formValues[key] !== this.prevUser[key]) {
+          dataUpdate[key] = this.$refs.formInput.formValues[key];
+        }
+      }
+
+      if (Object.keys(dataUpdate).length === 0) {
+        this.message = "No data change";
+        this.type = false;
+        this.showNotification = true;
+        return;
+      }
+
+      const response = await userService.updateUser(this.id, dataUpdate);
+      if (response.data.statusCode === 200) {
         this.message = "Success";
         this.type = true;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
-        this.$emit("update-user", response.data.data);
+        const updatedUser = {
+          ...this.$refs.formInput.formValues,
+          role:
+            this.$refs.formInput.formValues.roleId === "1"
+              ? "admin"
+              : this.$refs.formInput.formValues.roleId === "2"
+              ? "user"
+              : "product",
+          UserRoles: [
+            {
+              Role: {
+                roleName:
+                  this.$refs.formInput.formValues.roleId === "1"
+                    ? "admin"
+                    : this.$refs.formInput.formValues.roleId === "2"
+                    ? "user"
+                    : "product",
+              },
+            },
+          ],
+        };
+        this.$emit("update-user", updatedUser);
       }
     },
+
     async validatForm() {
       const isValid = this.$refs.formInput.validateFields();
       if (isValid) {

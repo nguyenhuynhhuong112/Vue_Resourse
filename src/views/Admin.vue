@@ -26,13 +26,13 @@
         <template v-slot:actions="{ item }">
           <button
             class="p-1 rounded-md mr-2 bg-blue-500 text-white"
-            @click="handleUpdate(item.id)"
+            @click="handleUpdate(item.userId)"
           >
             Update
           </button>
           <button
             class="bg-red-500 text-white p-1 rounded-md"
-            @click="handleDelete(item.id)"
+            @click="handleDelete(item.userId)"
           >
             Delete
           </button>
@@ -53,7 +53,7 @@
 import TableShowItems from "../components/table/TableShowItems.vue";
 import ButtonAdd from "../components/buttonAdd/ButtonAdd.vue";
 import ModalAdmin from "../components/modal/ModalAdmin.vue";
-import { deleteUser, loadDataUser } from "../services/user.services";
+import userService from "../services/user.services";
 import Notification from "../components/notification/Notification.vue";
 import Confirm from "../components/confirm/Confirm.vue";
 
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       showModalAdmin: false,
-      columns: ["id", "role", "userName", "email", "actions"],
+      columns: ["userId", "role", "userName", "email", "actions"],
       dataUser: [],
       message: "",
       type: false,
@@ -82,10 +82,10 @@ export default {
     };
   },
   async mounted() {
-    this.dataUser = (await loadDataUser()).map((user) => {
+    this.dataUser = (await userService.loadDataUser()).map((user) => {
       return {
         ...user,
-        role: user.userRoles.map((userRole) => userRole.role.name).join(", "),
+        role: user.UserRoles[0].Role.roleName,
       };
     });
   },
@@ -107,7 +107,7 @@ export default {
     },
     updateUserToTable(userUpdate) {
       this.dataUser = this.dataUser.map((user) => {
-        if (user.id === userUpdate.id) {
+        if (user.userId === userUpdate.userId) {
           return userUpdate;
         }
         return user;
@@ -124,25 +124,20 @@ export default {
       this.messageConfirm = "Are you sure want to delete this user?";
     },
     async handleConfirm(id) {
-      const findUser = this.dataUser.find((user) => user.id === id);
+      const findUser = this.dataUser.find((user) => user.userId === id);
       if (findUser.role === "admin") {
         this.message = "You are not authorized";
         this.type = false;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
+
         return;
       }
-      const response = await deleteUser(id);
-      if (response.status === 200) {
-        this.dataUser = this.dataUser.filter((user) => user.id !== id);
+      const response = await userService.deleteUser(id);
+      if (response.data.statusCode === 200) {
+        this.dataUser = this.dataUser.filter((user) => user.userId !== id);
         this.message = "Delete Success";
         this.type = true;
         this.showNotification = true;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 2000);
       }
       this.showConfirm = false;
       this.deletingUserId = null;

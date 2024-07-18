@@ -125,7 +125,6 @@ export default {
           dataUpdate[key] = this.$refs.formInput.formValues[key];
         }
       }
-      console.log("dataUpdate: ", dataUpdate);
       if (Object.keys(dataUpdate).length === 0) {
         this.message = "No data change";
         this.type = false;
@@ -143,7 +142,6 @@ export default {
     },
     async validatForm() {
       const isValid = this.$refs.formInput.validateFields();
-      console.log("id: ", this.id);
       if (isValid) {
         if (this.id) {
           await this.updateProduct();

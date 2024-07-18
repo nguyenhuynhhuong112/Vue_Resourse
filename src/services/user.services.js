@@ -6,68 +6,66 @@ async function loginUser(email, password) {
       email,
       password,
     };
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}user/login`, body);
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}user/login`,
+      body
+    );
     return response;
   } catch (error) {
     return error;
   }
 }
-export { loginUser };
 
-// export const loginUser = async (email, password) => {
-//   try {
-//     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}login`, {
-//       email,
-//       password,
-//     });
-//     return response
-//   } catch (error) {
-//     return error;
-//   }
-// };
-
-export const loadDataUser = async () => {
+async function loadDataUser() {
   try {
-    // const response = await axios.get(
-    //   "https://667054bc0900b5f8724a3ee9.mockapi.io/user/user"
-    // );
     const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}get-all-users`
+      `${import.meta.env.VITE_BASE_URL}user/get-all-users`
     );
-    return response.data.data;
+    return response.data.result;
   } catch (error) {
     return error;
   }
-};
-export const createUser = async (data) => {
+}
+
+async function createUser(data) {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}create-user`,
+      `${import.meta.env.VITE_BASE_URL}user/create-user`,
       data
     );
     return response;
   } catch (error) {
     return error;
   }
-};
-export const updateUser = async (id, data) => {
+}
+
+async function updateUser(id, data) {
   try {
     const response = await axios.patch(
-      `${import.meta.env.VITE_BASE_URL}update-user/${id}`,
+      `${import.meta.env.VITE_BASE_URL}user/update-user/${id}`,
       data
     );
     return response;
   } catch (error) {
     return error;
   }
-};
-export const deleteUser = async (id) => {
+}
+
+async function deleteUser(id) {
   try {
     const response = await axios.delete(
-      `${import.meta.env.VITE_BASE_URL}delete-user/${id}`
+      `${import.meta.env.VITE_BASE_URL}user/delete-user/${id}`
     );
     return response;
   } catch (error) {
     return error;
   }
+}
+
+export default {
+  loginUser,
+  loadDataUser,
+  createUser,
+  updateUser,
+  deleteUser,
 };
