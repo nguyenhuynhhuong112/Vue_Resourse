@@ -86,13 +86,6 @@ export default {
           this.showNotification = false;
           this.$router.push({ name: "Dashboard" });
         }
-      } else {
-        this.showNotification = true;
-        this.message = "Form is invalid! Please correct the errors.";
-        this.type = false;
-        setTimeout(() => {
-          this.showNotification = false;
-        }, 3000);
       }
     },
     handleCloseNotification() {

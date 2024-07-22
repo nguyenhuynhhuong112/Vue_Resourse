@@ -184,11 +184,7 @@ export default {
         } else {
           await this.createUser();
         }
-      } else {
-        this.message = "Fail";
-        this.type = false;
-        this.showNotification = true;
-      }
+      } 
     },
     handleCloseNotification() {
       this.showNotification = false;
